@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "557310563472",
+    "firebase_url": "https://incidentapp-a83ef-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "incidentapp-a83ef",
+    "storage_bucket": "incidentapp-a83ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557310563472:android:ed658284eaf37ac39a3415",
+        "android_client_info": {
+          "package_name": "com.example.incidentapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557310563472-ii5je0k6fbhf3ck4k4prf6m9lbs62cm9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.incidentapplication",
+            "certificate_hash": "0c5b9ae62abce68a5e713ea726925389dc3c2a1b"
+          }
+        },
+        {
+          "client_id": "557310563472-5fo6hk6e6mgvk18197fuibro5m74rgg3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi4d2_2Ys9j6ob3LU1bf74R9NGyQBFGeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557310563472-5fo6hk6e6mgvk18197fuibro5m74rgg3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">IncidentApplication</string>
+    <string name="login_text">Login</string>
+    <string name="email">Email address</string>
+    <string name="password_text">Password</string>
+    <string name="go_sign_up_text">Don\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="full_name">Full name</string>
+    <string name="repeat_password_text">Repeat password</string>
+    <string name="go_login_text">Back to Login</string>
+
+</resources>
