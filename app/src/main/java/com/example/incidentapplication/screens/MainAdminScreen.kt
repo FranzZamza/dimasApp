@@ -6,20 +6,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.incidentapplication.MainViewModel
 import com.example.incidentapplication.R
 import com.example.incidentapplication.Request
@@ -33,13 +32,14 @@ import kotlinx.coroutines.launch
 @OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun Main(navController: NavHostController) {
+fun MainAdminScreen(navController: NavController) {
 
     val viewModel = MainViewModel()
-    val requests = viewModel.request.observeAsState()
+    val requests =
+        viewModel.allRequests.observeAsState()
 
     GlobalScope.launch(Dispatchers.IO) {
-        viewModel.getDataFromDb()
+        viewModel.getAllRequests()
     }
 
     Surface(
@@ -47,16 +47,17 @@ fun Main(navController: NavHostController) {
             .fillMaxSize(),
         color = Color(0x2BC5F8FF)
     ) {
-        Box(modifier = Modifier.padding(top = 16.dp)) {
-            requests.value?.let { RequestList(requests = it, viewModel) }
-        }
-        BottomNav(navController)
-    }
 
+        Box(modifier = Modifier.padding(top = 16.dp)) {
+            requests.value?.let { AdminList(requests = it, viewModel = viewModel, navController) }
+        }
+        AdminBottomNav(navController)
+    }
 }
 
+
 @Composable
-fun BottomNav(navController: NavController) {
+fun AdminBottomNav(navController: NavController){
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround,
@@ -64,7 +65,7 @@ fun BottomNav(navController: NavController) {
     ) {
         Button(
             onClick = {
-                navController.navigate("Main")
+                navController.navigate("MainAdminScreen")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,22 +77,6 @@ fun BottomNav(navController: NavController) {
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_home),
-                contentDescription = null,
-                tint = Color(0xFFF8FAFF)
-            )
-        }
-        Button(
-            onClick = { navController.navigate("CreateScreen") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            border = BorderStroke(color = Color.Transparent, width = 0.dp),
-            elevation = ButtonDefaults.elevation(0.dp),
-            shape = RoundedCornerShape(0.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0x806992FF))
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_create),
                 contentDescription = null,
                 tint = Color(0xFFF8FAFF)
             )
@@ -111,7 +96,6 @@ fun BottomNav(navController: NavController) {
                 tint = Color(0xFFF8FAFF)
             )
         }
-
         Button(
             onClick = {
                 navController.navigate("Login")
@@ -135,24 +119,23 @@ fun BottomNav(navController: NavController) {
 }
 
 @Composable
-fun RequestList(requests: List<Request>, viewModel: MainViewModel) {
+fun AdminList(requests: List<Request>, viewModel: MainViewModel, navController: NavController) {
+
     Box(modifier = Modifier.padding(top = 18.dp))
     LazyColumn {
-        items(requests) { request ->
-            RequestItem(request = request, viewModel)
+        itemsIndexed(requests) { index, request ->
+            AdminItem(request = request, viewModel, navController)
         }
     }
 }
 
-
 @OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun RequestItem(request: Request, viewModel: MainViewModel) {
+fun AdminItem(request: Request, viewModel: MainViewModel, navController: NavController) {
     var isConvert by remember {
         mutableStateOf(true)
     }
-
     Card(
         elevation = 0.dp,
         modifier = Modifier
@@ -163,7 +146,6 @@ fun RequestItem(request: Request, viewModel: MainViewModel) {
             },
         backgroundColor = Color(0x66C5E4FF),
         border = BorderStroke(color = Color.Transparent, width = 0.dp)
-
     ) {
         Column(Modifier.padding(horizontal = 16.dp)) {
             Row(
@@ -187,6 +169,7 @@ fun RequestItem(request: Request, viewModel: MainViewModel) {
                     fontSize = 12.sp,
                 )
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -200,6 +183,7 @@ fun RequestItem(request: Request, viewModel: MainViewModel) {
                     overflow = TextOverflow.Ellipsis
                 )
             }
+
             Row(horizontalArrangement = Arrangement.Center) {
                 if (!isConvert) GlideImage(
                     imageModel = request.image,
@@ -207,6 +191,25 @@ fun RequestItem(request: Request, viewModel: MainViewModel) {
                     alignment = Alignment.Center
                 )
             }
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(onClick = {
+                    viewModel.completeRequest(request.key)
+                    navController.navigate("MainAdminScreen")
+                }) {
+                    Text(text = "Решено")
+                }
+                Button(onClick = {
+                    viewModel.completeRequest(request.key)
+                    navController.navigate("MainAdminScreen")
+                }) {
+                    Text(text = "Отказать")
+                }
+            }
+
             Row(
                 Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.Bottom,
@@ -222,6 +225,5 @@ fun RequestItem(request: Request, viewModel: MainViewModel) {
                 )
             }
         }
-
     }
 }

@@ -82,6 +82,14 @@ fun SignUp(navController: NavController, auth: FirebaseAuth) {
                         ).show()
                     }
 
+                    password.value != repeatPassword.value -> {
+                        Toast.makeText(
+                            context,
+                            "Passwords do not match",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
                     fullName.value.isEmpty() -> {
                         Toast.makeText(
                             context,
@@ -90,13 +98,6 @@ fun SignUp(navController: NavController, auth: FirebaseAuth) {
                         ).show()
                     }
 
-                    password.value != repeatPassword.value -> {
-                        Toast.makeText(
-                            context,
-                            "Passwords do not match",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
                     else -> {
                         createNewAccount(
                             auth,

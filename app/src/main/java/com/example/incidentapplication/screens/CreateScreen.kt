@@ -16,6 +16,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.incidentapplication.MainViewModel
-import com.example.incidentapplication.componentUI.TextInput
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -39,60 +39,67 @@ fun CreateScreen(navController: NavController, auth: FirebaseAuth) {
     val viewModel = MainViewModel()
     val context = LocalContext.current
     val imageData = remember { mutableStateOf(null as Uri?) }
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
-            imageData.value = it
-        }
-
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+        imageData.value = it
+    }
     val imageIncident = remember {
         mutableStateOf(com.example.incidentapplication.R.drawable.ic_baseline_image_search_24)
     }
+    val textOfTopic = viewModel.topic.observeAsState(initial = "")
+    val textOfDescription = viewModel.desc.observeAsState(initial = "")
 
-    val textOfTopic = remember { mutableStateOf("") }
-    val textOfDescription = remember {
-        mutableStateOf("")
-    }
     Column(
         Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "Create request", fontSize = 36.sp, modifier = Modifier.padding(top = 8.dp))
-
-        TextInput(label = "Topic", text = textOfTopic)
-        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            text = "Регистрация инцидента",
+            fontSize = 36.sp,
+            modifier = Modifier.padding(top = 8.dp)
+        )
         OutlinedTextField(
-            value = textOfDescription.value, onValueChange = { textOfDescription.value = it },
-            label = { Text(text = "Description") },
+            value = textOfTopic.value,
+            onValueChange = { viewModel.setTopic(it) },
+            label = { Text(text = "Тема") },
             modifier = Modifier
-                .height(200.dp)
+                .height(60.dp)
                 .fillMaxWidth(),
         )
-        Spacer(modifier = Modifier.height(32.dp))
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        OutlinedTextField(
+            value = textOfDescription.value,
+            onValueChange = { viewModel.setDesc(it) },
+            label = { Text(text = "Описание") },
+            modifier = Modifier
+                .height(120.dp)
+                .fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(26.dp))
         Card(
             modifier = Modifier
                 .height(200.dp)
                 .fillMaxWidth()
                 .clickable {
                     launcher.launch("image/*")
-
                 }
-
         ) {
-
-            Box(modifier = Modifier.size(80.dp)
-            , Alignment.Center) {
+            Box(
+                modifier = Modifier.size(80.dp), Alignment.Center
+            ) {
                 Image(
                     painter = painterResource(imageIncident.value),
                     contentDescription = "",
                     alignment = Alignment.Center,
                 )
             }
-
             UploadedImageView(imageData = imageData, context = context)
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(26.dp))
         Button(
             onClick = {
                 val imageKey = Firebase.database.reference.push().key
@@ -104,7 +111,6 @@ fun CreateScreen(navController: NavController, auth: FirebaseAuth) {
                         imageData,
                         imageKey
                     )
-
                     viewModel.imageIdSet(imageKey)
                 }
                 navController.navigate("Main")
@@ -113,10 +119,9 @@ fun CreateScreen(navController: NavController, auth: FirebaseAuth) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            Text(text = "Send")
+            Text(text = "Отправить")
         }
     }
-
 }
 
 @Composable
@@ -173,6 +178,9 @@ fun addNewRequest(
 
         database.getReference(user?.uid.toString()).child("request").child(key)
             .child("image").setValue(imageKey)
+
+        database.getReference(user?.uid.toString()).child("request").child(key)
+            .child("status").setValue("на рассмотрении")
 
         saveToBd(auth, imageData = imageData, imageKey)
     }

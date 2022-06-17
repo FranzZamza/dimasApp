@@ -1,5 +1,4 @@
 package com.example.incidentapplication.screens
-
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
@@ -97,14 +96,10 @@ private fun loginWithEmailAndPassword(
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener() { task ->
             if (task.isSuccessful) {
-                // Sign in success, update UI with the signed-in user's information
                 Log.d(TAG, "signInWithEmail:success")
-                val user = auth.currentUser
                 navController.navigate("Main")
-
             } else {
-                Toast.makeText(context, "Password or email is not correct", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(context, "Password or email is not correct", Toast.LENGTH_SHORT).show()
                 Log.w(TAG, "signInWithEmail:failure", task.exception)
             }
         }
