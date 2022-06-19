@@ -57,7 +57,7 @@ fun MainAdminScreen(navController: NavController) {
 
 
 @Composable
-fun AdminBottomNav(navController: NavController){
+fun AdminBottomNav(navController: NavController) {
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround,
@@ -203,7 +203,7 @@ fun AdminItem(request: Request, viewModel: MainViewModel, navController: NavCont
                     Text(text = "Решено")
                 }
                 Button(onClick = {
-                    viewModel.completeRequest(request.key)
+                    viewModel.rejectRequest(request.key)
                     navController.navigate("MainAdminScreen")
                 }) {
                     Text(text = "Отказать")

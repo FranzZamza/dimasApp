@@ -180,7 +180,7 @@ fun addNewRequest(
             .child("image").setValue(imageKey)
 
         database.getReference(user?.uid.toString()).child("request").child(key)
-            .child("status").setValue("на рассмотрении")
+            .child("status").setValue("в ожидании")
 
         saveToBd(auth, imageData = imageData, imageKey)
     }

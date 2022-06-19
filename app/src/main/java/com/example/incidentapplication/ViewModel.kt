@@ -103,7 +103,7 @@ class MainViewModel : ViewModel() {
                     val uid = user.key
                     user.child("request").children.forEach {
                         it.child("status")
-                        if (it.child("status").value != "на рассмотрении") {
+                        if (it.child("status").value == "в ожидании") {
                             val key = it.key.toString()
                             val topic = it.child("topic").value.toString()
                             val description = it.child("description").value.toString()
@@ -169,11 +169,12 @@ class MainViewModel : ViewModel() {
                     }
                 }
             }
-            Firebase.database.getReference(uid).child("request").child(key).child("status").setValue("выполнено").await()
+            Firebase.database.getReference(uid).child("request")
+                .child(key).child("status").setValue("выполнено").await()
         }
     }
 
-    fun rejectRequest(requestKey: String){
+        fun rejectRequest(requestKey: String){
         viewModelScope.launch(Dispatchers.IO) {
             var uid=""
             var key=""
@@ -190,7 +191,8 @@ class MainViewModel : ViewModel() {
                     }
                 }
             }
-            Firebase.database.getReference(uid).child("request").child(key).child("status").setValue("отклонено").await()
+            Firebase.database.getReference(uid).child("request")
+                .child(key).child("status").setValue("отклонено").await()
         }
     }
 }
